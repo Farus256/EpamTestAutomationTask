@@ -4,56 +4,11 @@ using FluentAssertions;
 using Serilog;
 using EpamTestAutomationTask.Utilities;
 
-namespace EpamTestAutomationTask;
+namespace EpamTestAutomationTask.Tests;
 
 [TestClass]
-public class LoginTests
+public class LoginTests : BaseTest
 {
-    private IWebDriver _driver;
-    private const string BaseUrl = "https://www.saucedemo.com/";
-
-    // Login info
-    private const string ValidUsername = "standard_user";
-    private const string ValidPassword = "secret_sauce";
-
-    // Stores current test info
-    public TestContext TestContext { get; set; }
-
-    [TestInitialize]
-    public void SetUp()
-    {
-        // Initialize logger
-        Logger.InitializeLogger();
-        Log.Information("Test started");
-    }
-
-    [TestCleanup]
-    public void EndTest()
-    {
-        try
-        {
-            if (TestContext.CurrentTestOutcome != UnitTestOutcome.Passed && _driver != null)
-            {
-                Logger.SaveScreenshot((ITakesScreenshot)_driver);
-            }
-        }
-        finally
-        {
-            try
-            {
-                _driver?.Quit();
-                _driver?.Dispose();
-                _driver = null;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Error closing driver");
-            }
-            Log.Information("Test ended");
-            Logger.CloseLogger();
-        }
-    }
-
     [TestMethod]
     [DataRow("firefox")]
     [DataRow("edge")]
@@ -133,15 +88,6 @@ public class LoginTests
         logoText.Should().Be("Swag Labs");
 
         Log.Information("UC-3 passed on {Browser}", browser);
-    }
-
-    private BrowserType GetBrowserType(string browser)
-    {
-        if (browser.Equals("firefox", StringComparison.OrdinalIgnoreCase))
-            return BrowserType.Firefox;
-        if (browser.Equals("edge", StringComparison.OrdinalIgnoreCase))
-            return BrowserType.Edge;
-        throw new ArgumentException("Unsupported browser type");
     }
 }
 

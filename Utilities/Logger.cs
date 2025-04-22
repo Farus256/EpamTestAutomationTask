@@ -33,6 +33,16 @@ public static class Logger
         Log.CloseAndFlush();
     }
 
+    public static void Message(string message)
+    {
+        Log.Information(message);
+    }
+
+    public static void Error(Exception ex, string message)
+    {
+        Log.Error(ex, message);
+    }
+
     public static void SaveScreenshot(ITakesScreenshot driver)
     {
         try
