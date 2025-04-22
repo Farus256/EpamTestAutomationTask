@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using EpamTestAutomationTask.Utilities;
+using EpamTestAutomationTask.Pages;
 
 namespace EpamTestAutomationTask.Tests
 {
@@ -17,6 +18,8 @@ namespace EpamTestAutomationTask.Tests
         // Login info
         protected const string ValidUsername = "standard_user";
         protected const string ValidPassword = "secret_sauce";
+
+  
 
         // Stores current test info
         public TestContext TestContext { get; set; }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium;
 using FluentAssertions;
 using Serilog;
 using EpamTestAutomationTask.Utilities;
+using EpamTestAutomationTask.Pages;
 
 namespace EpamTestAutomationTask.Tests;
 
@@ -18,22 +18,18 @@ public class LoginTests : BaseTest
         _driver = WebDriverFactory.CreateDriver(GetBrowserType(browser));
         _driver.Navigate().GoToUrl(BaseUrl);
 
-        var usernameField = _driver.FindElement(By.CssSelector("[data-test='username']"));
-        var passwordField = _driver.FindElement(By.CssSelector("[data-test='password']"));
-        var loginButton = _driver.FindElement(By.CssSelector("[data-test='login-button']"));
+        LoginPage loginPage = new LoginPage(_driver);
 
-        usernameField.SendKeys(ValidUsername);
-        passwordField.SendKeys(ValidPassword);
+        loginPage.EnterUsername("ValidUsername");
+        loginPage.EnterPassword("ValidPassword");
 
-        usernameField.SendKeys(Keys.Control + "a");
-        usernameField.SendKeys(Keys.Delete);
+        loginPage.EnterUsername("");
+        loginPage.EnterPassword("");
 
-        passwordField.SendKeys(Keys.Control + "a");
-        passwordField.SendKeys(Keys.Delete);
+        loginPage.ClickLoginButton();
 
-        loginButton.Click();
+        var errorMessage = loginPage.GetErrorMessage();
 
-        var errorMessage = _driver.FindElement(By.CssSelector("[data-test='error']")).Text;
         errorMessage.Should().Contain("Username is required");
         Log.Information("UC-1 passed on {Browser}", browser);
     }
@@ -47,19 +43,15 @@ public class LoginTests : BaseTest
         _driver = WebDriverFactory.CreateDriver(GetBrowserType(browser));
         _driver.Navigate().GoToUrl(BaseUrl);
 
-        var usernameField = _driver.FindElement(By.CssSelector("[data-test='username']"));
-        var passwordField = _driver.FindElement(By.CssSelector("[data-test='password']"));
-        var loginButton = _driver.FindElement(By.CssSelector("[data-test='login-button']"));
+        LoginPage loginPage = new LoginPage(_driver);
 
-        usernameField.SendKeys(ValidUsername);
-        passwordField.SendKeys(ValidPassword);
+        loginPage.EnterUsername("ValidUsername");
+        loginPage.EnterPassword("");
 
-        passwordField.SendKeys(Keys.Control + "a");
-        passwordField.SendKeys(Keys.Delete);
+        loginPage.ClickLoginButton();
 
-        loginButton.Click();
+        var errorMessage = loginPage.GetErrorMessage();
 
-        var errorMessage = _driver.FindElement(By.CssSelector("[data-test='error']")).Text;
         errorMessage.Should().Contain("Password is required");
         
         Log.Information("UC-2 passed on {Browser}", browser);
@@ -74,17 +66,15 @@ public class LoginTests : BaseTest
         _driver = WebDriverFactory.CreateDriver(GetBrowserType(browser));
         _driver.Navigate().GoToUrl(BaseUrl);
 
-        var usernameField = _driver.FindElement(By.CssSelector("[data-test='username']"));
-        var passwordField = _driver.FindElement(By.CssSelector("[data-test='password']"));
-        
-        usernameField.SendKeys(ValidUsername);
-        passwordField.SendKeys(ValidPassword);
+        LoginPage loginPage = new LoginPage(_driver);
 
-        var loginButton = _driver.FindElement(By.CssSelector("[data-test='login-button']"));
-        loginButton.Click();
+        loginPage.EnterUsername("standard_user");
+        loginPage.EnterPassword("secret_sauce");
 
-        var logoElement = _driver.FindElement(By.CssSelector(".app_logo"));
-        var logoText = logoElement.Text;
+        loginPage.ClickLoginButton();
+
+        var logoText = loginPage.GetLogo();
+
         logoText.Should().Be("Swag Labs");
 
         Log.Information("UC-3 passed on {Browser}", browser);
